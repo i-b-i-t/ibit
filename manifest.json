@@ -1,0 +1,33 @@
+{
+    "format_version": 2,
+    "metadata": {
+        "authors": [ "LJM12914" ]
+    },
+    "header": {
+        "name": "IBIT",
+        "description": "What will you do?",
+        "min_engine_version": [ 1, 21, 120 ],
+        "uuid": "791d5831-c0a6-4eef-b95c-2fc3d608d9f9",
+        "version": [ 1, 0, 0 ]
+    },
+    "modules": [
+        {
+            "type": "data",
+            "uuid": "4823918e-198a-488a-bf8d-0565539f74bb",
+            "version": [ 1, 0, 0 ]
+        },
+        {
+            "type": "script",
+            "uuid": "3aa6b08b-1d22-400e-86a2-c1e6ecdd5e40",
+            "version": [ 1, 0, 0 ],
+            "language": "javascript",
+            "entry": "scripts/main.js"
+        }
+    ],
+    "dependencies": [
+        {
+            "module_name": "@minecraft/server",
+            "version": "2.4.0-beta"
+        }
+    ]
+}
