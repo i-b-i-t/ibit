@@ -2,13 +2,15 @@ import { system } from "@minecraft/server";
 import { wp, wpActionsEnum, wpCommand, back, backCommand } from "./waypoint";
 import { fb, fbStatesEnum, nightVisionCommand, tt, ttStatesEnum, autoTotemCommand, dupe, dupeCommand } from "./cheat";
 import { kill, suicideCommand1, suicideCommand2 } from "./suicide";
+import { reinit, reInitializeCommand, playersCommand, playersList } from "./spawn";
 
 import regulation from "./regulation";
 import explosion from "./explosion";
-import { reinit, reInitializeCommand, playersCommand, playersList } from "./spawn";
+import revert from "./revert";
 
 regulation();
 explosion();
+revert();
 
 system.beforeEvents.startup.subscribe(init=>{
     init.customCommandRegistry.registerEnum("ibit:wp_actions", wpActionsEnum);
