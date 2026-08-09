@@ -48,34 +48,41 @@ export function tt(origin, state){
 world.afterEvents.entityHealthChanged.subscribe(data=>{
     if(data.entity && data.entity.typeId === "minecraft:player" && data.entity.getDynamicProperty("autoTotem") && data.oldValue <= 0 && data.newValue == 1){
         const
-        player = data.entity,
-        offhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipmentSlot(EquipmentSlot.Offhand);
-        if(!offhand || !offhand.hasItem()) {
-            const inventory = player.getComponent(EntityComponentTypes.Inventory);
-            if(inventory && inventory.container){
-                const container = inventory.container, slots = [];
-                for(let j = 0; j < container.size; j++){
-                    const item = container.getItem(j);
-                    if(item && item.typeId === "minecraft:totem_of_undying"){
-                        //Use hotbar slots last, and prefer right side of hotbar
-                        if(j < 8) slots.push(200 - j);
-                        else slots.push(j);
-                    }
+            player = data.entity,
+            offhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipmentSlot(EquipmentSlot.Offhand),
+            mainhand = player.getComponent("minecraft:inventory").container.getItem(player.selectedSlotIndex),
+            inventory = player.getComponent(EntityComponentTypes.Inventory);
+        if(inventory && inventory.container){
+            const container = inventory.container, slots = [];
+            for(let j = 0; j < container.size; j++){
+                const item = container.getItem(j);
+                if(item && item.typeId === "minecraft:totem_of_undying"){
+                    //Use hotbar slots last, and prefer right side of hotbar
+                    if(j < 8) slots.push(200 - j);
+                    else slots.push(j);
                 }
-                if(slots.length > 0){
-                    player.sendMessage(`§${slots.length > 10 ? "a" : slots.length > 5 ? "6" : slots.length > 2 ? "c" : "c§l"}Totems left: ${slots.length}`);
-                    slots.sort((a, b)=>a - b);
-                    const totemSlot = slots[0] >= 100 ? 200 - slots[0] : slots[0];
-                    const totemItem = container.getItem(totemSlot);
-                    if(totemItem && totemItem.typeId === "minecraft:totem_of_undying"){
+            }
+            if(slots.length > 0){
+                player.sendMessage(`§${slots.length > 10 ? "a" : slots.length > 5 ? "6" : slots.length > 2 ? "c" : "c§l"}Totems left: ${slots.length}`);
+                slots.sort((a, b)=>a - b);
+                const totemSlot = slots[0] >= 100 ? 200 - slots[0] : slots[0];
+                const totemItem = container.getItem(totemSlot);
+                if(totemItem && totemItem.typeId === "minecraft:totem_of_undying"){
+                    if(offhand.hasItem()){
+                        if(!mainhand){
+                            container.setItem(totemSlot, null);
+                            container.setItem(player.selectedSlotIndex, totemItem);
+                        }
+                        else player.sendMessage("§c§lNo available empty slot to place the totem!");
+                    }
+                    else{
                         container.setItem(totemSlot, null);
                         offhand.setItem(totemItem);
                     }
                 }
-                else player.sendMessage("§c§lYou've ran out of Totems!");
             }
+            else player.sendMessage("§c§lYou've ran out of Totems!");
         }
-        else world.sendMessage(offhand.typeId);
     }
 });
 
