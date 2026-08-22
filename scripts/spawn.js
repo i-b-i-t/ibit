@@ -22,6 +22,7 @@ export function reinit(origin){
         }
         player.setDynamicProperty("nightVision", true);
         player.setDynamicProperty("autoTotem", true);
+        player.setDynamicProperty("noDarkness", true);
         player.sendMessage("§6[Server] Should be re-initialized now.");
     }
 }
@@ -46,6 +47,7 @@ world.afterEvents.playerSpawn.subscribe(data=>{
             showParticles: false
         });
         data.player.setDynamicProperty("autoTotem", true);
+        data.player.setDynamicProperty("noDarkness", true);
     }
     else{
         if(data.player.getDynamicProperty("nightVision")) data.player.addEffect("minecraft:night_vision", 999999, {

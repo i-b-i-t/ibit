@@ -1,6 +1,6 @@
 import { system } from "@minecraft/server";
 import { wp, wpActionsEnum, wpCommand, back, backCommand } from "./waypoint";
-import { fb, fbStatesEnum, nightVisionCommand, tt, ttStatesEnum, autoTotemCommand, dupe, dupeCommand } from "./cheat";
+import { fb, fbStatesEnum, nightVisionCommand, tt, ttStatesEnum, autoTotemCommand, nd, ndStatesEnum, noDarknessCommand, dupe, dupeCommand } from "./cheat";
 import { kill, suicideCommand1, suicideCommand2 } from "./suicide";
 import { reinit, reInitializeCommand, playersCommand, playersList } from "./spawn";
 
@@ -16,11 +16,13 @@ system.beforeEvents.startup.subscribe(init=>{
     init.customCommandRegistry.registerEnum("ibit:wp_actions", wpActionsEnum);
     init.customCommandRegistry.registerEnum("ibit:fb_states", fbStatesEnum);
     init.customCommandRegistry.registerEnum("ibit:totem_states", ttStatesEnum);
+    init.customCommandRegistry.registerEnum("ibit:nd_states", ndStatesEnum);
     init.customCommandRegistry.registerCommand(reInitializeCommand, reinit);
     init.customCommandRegistry.registerCommand(playersCommand, playersList);
     init.customCommandRegistry.registerCommand(wpCommand, wp);
     init.customCommandRegistry.registerCommand(nightVisionCommand, fb);
     init.customCommandRegistry.registerCommand(autoTotemCommand, tt);
+    init.customCommandRegistry.registerCommand(noDarknessCommand, nd);
     init.customCommandRegistry.registerCommand(suicideCommand1, kill);
     init.customCommandRegistry.registerCommand(suicideCommand2, kill);
     init.customCommandRegistry.registerCommand(dupeCommand, dupe);

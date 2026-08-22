@@ -23,6 +23,17 @@ autoTotemCommand = {
     }],
 },
 ttStatesEnum = ["on", "off"],
+noDarknessCommand = {
+    name: "ibit:nd",
+    description: "Toggles No Darkness.",
+    permissionLevel: CommandPermissionLevel.Any,
+    mandatoryParameters: [{
+        name: "state",
+        type: CustomCommandParamType.Enum,
+        enumName: "ibit:nd_states"
+    }],
+},
+ndStatesEnum = ["on", "off"],
 dupeCommand = {
     name: "ibit:dupe",
     description: "Duplicates the item in your main hand.",
@@ -42,6 +53,14 @@ export function tt(origin, state){
         const player = origin.sourceEntity;
         player.setDynamicProperty("autoTotem", state === "on");
         player.sendMessage(`[Server] Auto Totem is ${state === "on" ? "enabled" : "disabled"} for you.`);
+    }
+}
+
+export function nd(origin, state){
+    if(origin.sourceEntity && origin.sourceEntity.typeId === "minecraft:player"){
+        const player = origin.sourceEntity;
+        player.setDynamicProperty("noDarkness", state === "on");
+        player.sendMessage(`[Server] No Darkness is ${state === "on" ? "enabled" : "disabled"} for you.`);
     }
 }
 
@@ -86,7 +105,15 @@ world.afterEvents.entityHealthChanged.subscribe(data=>{
     }
 });
 
-const DUPE_INTERVAL = 120;
+world.beforeEvents.effectAdd.subscribe(data=>{
+    if(
+        data.entity.typeId === "minecraft:player"
+     && data.entity.getDynamicProperty("noDarkness")
+     && data.effectType == "黑暗"
+    ) data.cancel = true;
+});
+
+const DUPE_INTERVAL = 10;
 
 export function dupe(origin){
     if(origin.sourceEntity && origin.sourceEntity.typeId === "minecraft:player"){
