@@ -114,6 +114,22 @@ world.beforeEvents.effectAdd.subscribe(data=>{
 });
 
 const DUPE_INTERVAL = 10;
+const DUPE_BLACKLIST = new Set([
+    "minecraft:deepslate_diamond_ore"
+]);
+
+function findBlockedDupeItem(item){
+    if(DUPE_BLACKLIST.has(item.typeId)) return item.typeId;
+    const container = item.getComponent(ItemComponentTypes.Inventory)?.container;
+    if(!container) return;
+    for(let slot = 0; slot < container.size; slot++){
+        const storedItem = container.getItem(slot);
+        if(storedItem){
+            const blockedItemId = findBlockedDupeItem(storedItem);
+            if(blockedItemId) return blockedItemId;
+        }
+    }
+}
 
 export function dupe(origin){
     if(origin.sourceEntity && origin.sourceEntity.typeId === "minecraft:player"){
@@ -122,6 +138,19 @@ export function dupe(origin){
         else{
             const item = player.getComponent("minecraft:inventory").container.getItem(player.selectedSlotIndex);
             if(item) {
+                let blockedItemId;
+                try{
+                    blockedItemId = findBlockedDupeItem(item);
+                }
+                catch(error){
+                    console.warn(`Cannot inspect item contents: ${item.typeId}: ${error}`);
+                    player.sendMessage(`§cCannot inspect item contents: ${item.typeId}`);
+                    return;
+                }
+                if(blockedItemId){
+                    player.sendMessage(`§cCannot dupe this item: ${blockedItemId}`);
+                    return;
+                }
                 system.run(()=>player.dimension.spawnItem(item, player.location));
                 player.setDynamicProperty("lastDupeTime", Date.now());
                 player.sendMessage("§aItem duplicated.");
